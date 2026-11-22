@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+/*
+ * The generated shadcn/ui components carry dark-mode classes. This app has one
+ * light theme, so those classes only apply under a `.dark` class that is never
+ * set, and do not follow the operating system setting.
+ */
+@custom-variant dark (&:is(.dark *));
+
+/* shadcn/ui theme tokens, set to Contour's colours. */
+:root {
+  color-scheme: light;
+  --radius: 0.625rem;
+  --background: #f7f5f0;
+  --foreground: #292521;
+  --card: #fffefa;
+  --card-foreground: #292521;
+  --popover: #ffffff;
+  --popover-foreground: #292521;
+  --primary: #56253a;
+  --primary-foreground: #fff9eb;
+  --secondary: #f5ebdf;
+  --secondary-foreground: #56253a;
+  --muted: #f6f2eb;
+  --muted-foreground: #665f59;
+  --accent: #f5eee8;
+  --accent-foreground: #56253a;
+  --destructive: #8f2a1e;
+  --border: #dbd4ca;
+  --input: #857b71;
+  --ring: #2463a3;
+  /* Two additions to the standard set, for the booking status badge. */
+  --success: #e4f2e8;
+  --success-foreground: #285641;
+  --warning: #f6edcf;
+  --warning-foreground: #624d10;
+}
+
+@theme inline {
+  --font-heading: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1,
+  h2 {
+    @apply font-heading font-medium tracking-tight text-balance;
+  }
+}
+
+/*
+ * Keyboard focus is one solid ring on every control, including links, the
+ * calendar and the time suggestions. It is outside the layers on purpose, so
+ * no component can switch it off. The ring colour has at least 3:1 contrast
+ * against the page and card backgrounds.
+ */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* On touch screens every button and field is at least 44px tall. */
+@media (pointer: coarse) {
+  [data-slot="button"]:not([data-size^="icon"]),
+  [data-slot="input"] {
+    min-height: 2.75rem;
+  }
+}
+
+/* The curved lines on the right of the wine banner. Decoration only. */
+@utility contour-lines {
+  background: repeating-radial-gradient(
+    ellipse at 100% 120%,
+    transparent 0 16px,
+    color-mix(in srgb, var(--secondary) 55%, transparent) 17px 18px,
+    transparent 19px 31px
+  );
+  mask-image: linear-gradient(to right, transparent, #000 40%);
+}
+
+/*
+ * The calendar is DayPicker, which ships its own stylesheet. These rules point
+ * its variables at the theme and let the month fill the dialog.
+ */
+.rdp-root {
+  --rdp-accent-color: var(--primary);
+  --rdp-accent-background-color: var(--accent);
+  --rdp-today-color: var(--primary);
+  --rdp-day_button-border-radius: var(--radius-md);
+  --rdp-selected-border: 0;
+  --rdp-weekday-opacity: 1;
+  --rdp-day-width: auto;
+  --rdp-day-height: 2.5rem;
+  --rdp-day_button-width: 100%;
+  --rdp-day_button-height: 2.5rem;
+  --rdp-nav_button-width: 2.5rem;
+  --rdp-nav_button-height: 2.5rem;
+}
+.rdp-months,
+.rdp-month {
+  display: block;
+  width: 100%;
+  max-width: none;
+}
+.rdp-month_grid {
+  width: 100%;
+  table-layout: fixed;
+}
+.rdp-month_caption {
+  font-weight: 600;
+}
+.rdp-weekday {
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+}
+.rdp-day_button:enabled:hover {
+  background: var(--accent);
+}
+.rdp-selected .rdp-day_button {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.rdp-today:not(.rdp-selected) .rdp-day_button {
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+@media (max-height: 720px) {
+  .rdp-root {
+    --rdp-day-height: 2.1rem;
+    --rdp-day_button-height: 2.1rem;
+  }
+}

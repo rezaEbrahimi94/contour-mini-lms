@@ -1,0 +1,44 @@
+name: Verify mini-LMS
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+
+# Every step is a command from the README, so a green run here means the
+# documented local verification works on a machine that has never seen the app.
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CONTOUR_START_TEST_SERVER: "1"
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Use the documented local configuration
+        run: cp .env.example .env.local
+      - name: Start local Supabase and apply migrations
+        run: npm run db:start
+      - name: Generated database types match the migrated schema
+        run: npm run db:types:check
+      - name: Contract drift, formatting, lint, types, unit tests, production build
+        run: npm run check
+      - name: Schema lint and Supabase security and performance advisors
+        run: npm run db:lint
+      - name: Ownership, grants and revisions in PostgreSQL
+        run: npm run test:db
+      - run: npx --no-install playwright install --with-deps chromium
+      - name: Browser and API journeys against the production build
+        run: npm run test:e2e
+      - name: Expired sessions and email confirmation
+        run: npm run test:auth-profiles
+      - name: Upgrade from the originally submitted schema, on a disposable stack
+        run: |
+          npm run isolated -- up
+          npm run isolated -- npm run test:upgrade
+          npm run isolated -- down
